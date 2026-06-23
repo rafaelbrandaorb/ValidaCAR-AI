@@ -219,23 +219,17 @@
             <h1>ValidaCAR <span style="color: var(--accent)">AI</span></h1>
             <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.95rem;">Análise Preditiva de Dados Anti-Fila do SICAR</p>
         </div>
-        <span class="badge-desafio">VCAR</span>
+        <span class="badge-desafio">haCARthon 2026 - Desafio 1</span>
     </header>
 
     <div class="dashboard">
         <div class="card">
-            <h2>📝 Pré-Módulo de Alinhamento Dataprev</h2>
+            <h2>📝 Formulário de Inscrição Prévio</h2>
             
             <div class="form-group">
-                <label for="cpfInput">CPF do Proprietário (Ambiente de Testes)</label>
-                <input type="text" id="cpfInput" value="107.282.101-00">
-                <small style="color: var(--text-muted); display:block; margin-top:4px;">CPF Fictício homologado pelo MGI.</small>
-            </div>
-
-            <div class="form-group">
-                <label for="sncrInput">Código de Associação SNCR Obrigatório</label>
-                <input type="text" id="sncrInput" placeholder="Ex: 9130730239223">
-                <small style="color: var(--text-muted); display:block; margin-top:4px;">Deixe em branco para simular a inconsistência de envio.</small>
+                <label for="cpfInput">CPF do Proprietário Cadastrado</label>
+                <input type="text" id="cpfInput" value="123.456.789-99">
+                <small style="color: var(--text-muted); display:block; margin-top:4px;">Insira o CPF idêntico ao documento de posse.</small>
             </div>
 
             <div class="form-group">
@@ -260,17 +254,17 @@
             
             <div class="score-container">
                 <div class="score-circle" id="scoreValue">45</div>
-                <div class="score-text" id="scoreStatus">Aguardando análise preventiva de dados...</div>
+                <div class="score-text" id="scoreStatus">Risco Crítico de Retenção na Fila do Governo</div>
             </div>
 
             <div id="logsContainer">
-                <h3 style="font-size: 1rem; margin-bottom: 15px;" id="tituloLista">Inconsistências Identificadas na Origem:</h3>
+                <h3 style="font-size: 1rem; margin-bottom: 15px;" id="tituloLista">Inconsistências Pendentes de Correção:</h3>
                 
                 <div class="alert-list" id="alertList">
                     <div class="alert-card critical" id="erroCpf">
                         <span class="alert-icon">❌</span>
                         <div>
-                            <strong>Associação SNCR Ausente:</strong> O ambiente Dataprev exige pelo menos um código SNCR vinculado a este CPF para homologar o cadastro pré-preenchido.
+                            <strong>Divergência Crítica de CPF:</strong> O OCR detetou que o CPF contido no documento anexado termina em <b>-00</b>, mas o seu formulário está preenchido com o final <b>-99</b>.
                         </div>
                     </div>
 
@@ -284,8 +278,8 @@
 
                 <div class="success-state" id="successState">
                     <span style="font-size: 3.5rem;">🎉</span>
-                    <h3>Dados 100% Homologados!</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Dados em total conformidade com as regras da Dataprev/MGI. Prontos para envio seguro no link <b style="color: var(--primary-light)">car-sus.dataprev.gov.br</b>.</p>
+                    <h3>Cadastro 100% Validado!</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Dados limpos e em total conformidade. Prontos para aprovação automatizada imediata no SICAR.</p>
                 </div>
             </div>
         </div>
@@ -293,8 +287,8 @@
 </div>
 
 <script>
-    function ejecutarValidacaoIA() {
-        const sncrValue = document.getElementById('sncrInput').value.trim();
+    function executarValidacaoIA() {
+        const cpfValue = document.getElementById('cpfInput').value;
         const pdfInput = document.getElementById('pdfFile');
         const geoInput = document.getElementById('geoFile');
         
@@ -304,26 +298,27 @@
         const successState = document.getElementById('successState');
         const tituloLista = document.getElementById('tituloLista');
 
+        // Garante que os ficheiros foram anexados antes de rodar
         if (pdfInput.files.length === 0 || geoInput.files.length === 0) {
             alert("Por favor, selecione os dois ficheiros de teste para que a IA possa fazer a leitura analítica.");
             return;
         }
 
+        // Animação de carregamento (simula a IA processando os ficheiros)
         scoreCircle.innerText = "...";
-        scoreStatus.innerText = "Cruzando dados com a malha fundiária e base simulada Dataprev...";
+        scoreStatus.innerText = "IA executando leitura OCR do PDF e processamento de malha KML...";
         scoreCircle.style.borderColor = "var(--warning)";
         scoreCircle.style.color = "var(--warning)";
 
         setTimeout(() => {
-            // Se o usuário digitou um dos códigos SNCR válidos do documento de teste
-            if(sncrValue === '9130730239223' || sncrValue === '9130730254613') {
+            // Verifica se o utilizador alterou o input simulando a correção do CPF
+            if(cpfValue.endsWith('-00')) {
                 scoreCircle.innerText = "100";
                 scoreCircle.style.borderColor = "var(--success)";
                 scoreCircle.style.color = "var(--success)";
-                scoreStatus.innerText = "Homologado para Envio Seguro (Fila Zero)";
+                scoreStatus.innerText = "Pronto para Envio Automatizado (Fila Zero)";
                 scoreStatus.style.color = "var(--success)";
 
-                alertList.style.style = 'none'; // Segurança contra o erro anterior
                 alertList.style.display = 'none';
                 tituloLista.style.display = 'none';
                 successState.style.display = 'block';
@@ -331,16 +326,16 @@
                 scoreCircle.innerText = "45";
                 scoreCircle.style.borderColor = "var(--warning)";
                 scoreCircle.style.color = "var(--warning)";
-                scoreStatus.innerText = "Risco Crítico de Rejeição no Ambiente de Testes";
+                scoreStatus.innerText = "Risco Crítico de Retenção na Fila do Governo";
                 scoreStatus.style.color = "var(--text-main)";
 
                 alertList.style.display = 'flex';
                 tituloLista.style.display = 'block';
                 successState.style.display = 'none';
                 
-                alert("Análise Concluída!\n\nErro: Falta a associação do código SNCR obrigatório exigido pela Dataprev para o CPF informado.");
+                alert("Análise Concluída com Alertas!\n\n1. O módulo OCR leu o ficheiro '" + pdfInput.files[0].name + "' e encontrou divergência no CPF.\n2. A IA de geoprocessamento mapeou '" + geoInput.files[0].name + "' e encontrou sobreposição de área.");
             }
-        }, 1500);
+        }, 1500); // 1.5 segundos de delay simulado para dar realismo técnico
     }
 </script>
 
