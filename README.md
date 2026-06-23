@@ -40,7 +40,7 @@ Este repositório é distribuído sob a licença **MIT**. Como premissa obrigat�
 
 ---
 
-## 👥 Autores
+## 👥 Equipe-054
 
-* **Rafael Brandão** — *Estratégia de Negócios, Regras de Governo e UX Design*
-* **Tony Sandro Sales** — *Desenvolvimento Full-Stack, Arquitetura de Dados e Lógica de IA*
+* **Rafael Brandão** 
+* **Tony Sandro Sales** 
