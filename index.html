@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValidaCAR AI - Dashboard de Pré-Análise</title>
+    <style>
+        :root {
+            --primary: #1b4332;
+            --primary-light: #40916c;
+            --accent: #52b788;
+            --background: #f4f9f4;
+            --card-bg: #ffffff;
+            --text-main: #1b4332;
+            --text-muted: #5c675d;
+            --danger: #d90429;
+            --warning: #f77f00;
+            --success: #2a9d8f;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2ebe2;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .badge-desafio {
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(27, 67, 50, 0.05);
+            border: 1px solid #e2ebe2;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d2ded2;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            border: 2px dashed var(--primary-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .btn-analise {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(64, 145, 108, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn-analise:hover { background: var(--primary); }
+        .btn-analise:active { transform: scale(0.99); }
+
+        /* Painel de Resultados */
+        .score-container {
+            text-align: center;
+            padding: 25px;
+            background: #f8fbf8;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #e2ebe2;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            background: white;
+            border: 6px solid var(--warning);
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0 auto 15px auto;
+            color: var(--warning);
+            transition: 0.5s ease-out;
+        }
+
+        .score-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .alert-card {
+            display: flex;
+            gap: 15px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            border-left: 5px solid transparent;
+            transition: all 0.5s ease;
+        }
+
+        .alert-card.critical {
+            background: #fff0f1;
+            border-left-color: var(--danger);
+            color: #5c0007;
+        }
+
+        .alert-card.warning {
+            background: #fff9db;
+            border-left-color: var(--warning);
+            color: #664d00;
+        }
+
+        .alert-icon { font-size: 1.2rem; }
+
+        .success-state {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--success);
+        }
+
+        .success-state h3 { margin: 10px 0 0 0; font-size: 1.4rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>ValidaCAR <span style="color: var(--accent)">AI</span></h1>
+            <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.95rem;">Análise Preditiva de Dados Anti-Fila do SICAR</p>
+        </div>
+        <span class="badge-desafio">haCARthon 2026 - Desafio 1</span>
+    </header>
+
+    <div class="dashboard">
+        <div class="card">
+            <h2>📝 Formulário de Inscrição Prévio</h2>
+            
+            <div class="form-group">
+                <label for="cpfInput">CPF do Proprietário Cadastrado</label>
+                <input type="text" id="cpfInput" value="123.456.789-99">
+                <small style="color: var(--text-muted); display:block; margin-top:4px;">Insira o CPF idêntico ao documento de posse.</small>
+            </div>
+
+            <div class="form-group">
+                <label style="margin-bottom: 15px; display: block; color: var(--primary);">Documentação Técnica Requerida:</label>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Certidão de Ônus Reais ou Matrícula (.pdf)</label>
+                    <input type="file" id="pdfFile" accept=".pdf">
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">Perímetro Georreferenciado (.kml, .shp)</label>
+                    <input type="file" id="geoFile" accept=".kml,.shp">
+                </div>
+            </div>
+
+            <button class="btn-analise" onclick="executarValidacaoIA()">Rodar Validação Inteligente</button>
+        </div>
+
+        <div class="card">
+            <h2>🤖 Painel de Diagnóstico da IA</h2>
+            
+            <div class="score-container">
+                <div class="score-circle" id="scoreValue">45</div>
+                <div class="score-text" id="scoreStatus">Risco Crítico de Retenção na Fila do Governo</div>
+            </div>
+
+            <div id="logsContainer">
+                <h3 style="font-size: 1rem; margin-bottom: 15px;" id="tituloLista">Inconsistências Pendentes de Correção:</h3>
+                
+                <div class="alert-list" id="alertList">
+                    <div class="alert-card critical" id="erroCpf">
+                        <span class="alert-icon">❌</span>
+                        <div>
+                            <strong>Divergência Crítica de CPF:</strong> O OCR detetou que o CPF contido no documento anexado termina em <b>-00</b>, mas o seu formulário está preenchido com o final <b>-99</b>.
+                        </div>
+                    </div>
+
+                    <div class="alert-card warning" id="erroMapa">
+                        <span class="alert-icon">⚠️</span>
+                        <div>
+                            <strong>Alerta de Sobreposição (Malha Digital):</strong> A IA Geométrica identificou cruzamento de 2.4% do perímetro do imóvel com os limites de uma <i>Unidade de Conservação</i> protegida. Revise os vértices do mapa.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-state" id="successState">
+                    <span style="font-size: 3.5rem;">🎉</span>
+                    <h3>Cadastro 100% Validado!</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Dados limpos e em total conformidade. Prontos para aprovação automatizada imediata no SICAR.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function executarValidacaoIA() {
+        const cpfValue = document.getElementById('cpfInput').value;
+        const pdfInput = document.getElementById('pdfFile');
+        const geoInput = document.getElementById('geoFile');
+        
+        const scoreCircle = document.getElementById('scoreValue');
+        const scoreStatus = document.getElementById('scoreStatus');
+        const alertList = document.getElementById('alertList');
+        const successState = document.getElementById('successState');
+        const tituloLista = document.getElementById('tituloLista');
+
+        // Garante que os ficheiros foram anexados antes de rodar
+        if (pdfInput.files.length === 0 || geoInput.files.length === 0) {
+            alert("Por favor, selecione os dois ficheiros de teste para que a IA possa fazer a leitura analítica.");
+            return;
+        }
+
+        // Animação de carregamento (simula a IA processando os ficheiros)
+        scoreCircle.innerText = "...";
+        scoreStatus.innerText = "IA executando leitura OCR do PDF e processamento de malha KML...";
+        scoreCircle.style.borderColor = "var(--warning)";
+        scoreCircle.style.color = "var(--warning)";
+
+        setTimeout(() => {
+            // Verifica se o utilizador alterou o input simulando a correção do CPF
+            if(cpfValue.endsWith('-00')) {
+                scoreCircle.innerText = "100";
+                scoreCircle.style.borderColor = "var(--success)";
+                scoreCircle.style.color = "var(--success)";
+                scoreStatus.innerText = "Pronto para Envio Automatizado (Fila Zero)";
+                scoreStatus.style.color = "var(--success)";
+
+                alertList.style.display = 'none';
+                tituloLista.style.display = 'none';
+                successState.style.display = 'block';
+            } else {
+                scoreCircle.innerText = "45";
+                scoreCircle.style.borderColor = "var(--warning)";
+                scoreCircle.style.color = "var(--warning)";
+                scoreStatus.innerText = "Risco Crítico de Retenção na Fila do Governo";
+                scoreStatus.style.color = "var(--text-main)";
+
+                alertList.style.display = 'flex';
+                tituloLista.style.display = 'block';
+                successState.style.display = 'none';
+                
+                alert("Análise Concluída com Alertas!\n\n1. O módulo OCR leu o ficheiro '" + pdfInput.files[0].name + "' e encontrou divergência no CPF.\n2. A IA de geoprocessamento mapeou '" + geoInput.files[0].name + "' e encontrou sobreposição de área.");
+            }
+        }, 1500); // 1.5 segundos de delay simulado para dar realismo técnico
+    }
+</script>
+
+</body>
+</html>
