@@ -42,5 +42,5 @@ Este repositório é distribuído sob a licença **MIT**. Como premissa obrigat�
 
 ## 👥 Equipe-054
 
-* **Rafael Brandão** 
+* **Rafael da Silva Brandão** 
 * **Tony Sandro Sales** 
